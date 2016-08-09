@@ -17,11 +17,17 @@ $( document ).ready(function() {
     app.addRoom($('#new-room').val());
   });
 
+  $('#room-select').change(function() {
+    app.fetch(serverUrl, app.displayMessages);
+  });
+
 });
 
 var app = {};
 
 var user = window.location.search.split('username=')[1];
+
+var serverUrl = 'https://api.parse.com/1/classes/messages';
 
 app.init = function () {
 
@@ -30,7 +36,7 @@ app.init = function () {
 app.send = function (message) {
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
-    url: 'https://api.parse.com/1/classes/messages',
+    url: serverUrl,
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
@@ -107,7 +113,7 @@ app.handleSubmit = function () {
 };
 
 app.getRooms = function () {
-  app.fetch('https://api.parse.com/1/classes/messages', app.updateRoomList);
+  app.fetch(serverUrl, app.updateRoomList);
 };
 
 app.updateRoomList = function (data) {
@@ -121,4 +127,4 @@ app.updateRoomList = function (data) {
 };
 
 app.getRooms();
-app.fetch('https://api.parse.com/1/classes/messages', app.displayMessages);
+app.fetch(serverUrl, app.displayMessages);
