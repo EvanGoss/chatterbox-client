@@ -1,6 +1,8 @@
 $( document ).ready(function() {
   console.log( 'ready!' );
- 
+
+  $('#user').prepend('<h3>You are now signed-in as ' + user + '.</h3>');
+
   $('body').on('click', '.username', function () {
     app.toggleFriend($(this).text());
     app.toggleMessages('friend');
@@ -145,7 +147,8 @@ app.addMessage = function (message) {
 };
 
 app.addRoom = function (room) {
-  $('#room-select').append('<option>' + room + '</option>');
+  var escaped = _.escape(room);
+  $('#room-select').append('<option>' + escaped + '</option>');
 };
 
 app.handleSubmit = function () {
@@ -165,7 +168,7 @@ app.getRooms = function () {
 
 app.updateRoomList = function (data) {
   console.log('update room list invoked');
-   
+
   var roomName = _.uniq(_.pluck(data.results, 'roomname')).sort();
   roomName.forEach(function(room) {
     app.addRoom(room);
@@ -174,7 +177,9 @@ app.updateRoomList = function (data) {
 
 app.changeUser = function(newUser) {
   window.location.search = "username=" + newUser;
+  user = newUser;
 };
 
 app.getRooms();
 app.fetch(serverUrl, app.displayMessages);
+
