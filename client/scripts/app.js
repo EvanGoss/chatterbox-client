@@ -1,7 +1,7 @@
 $( document ).ready(function() {
   console.log( 'ready!' );
 
-  $('#user').prepend('<h3>You are now signed-in as ' + user + '.</h3>');
+  $('#user').prepend('<h5>You are now signed-in as ' + user + '.</h5>');
 
   $('body').on('click', '.username', function () {
     app.toggleFriend($(this).text());
@@ -17,6 +17,15 @@ $( document ).ready(function() {
     console.log('submit button clicked');
     app.handleSubmit();
   });
+
+  $('body').keypress(function (event) {
+    console.log('enter button pressed');
+    if (event.which === 13) {
+      app.handleSubmit();
+      return false;
+    }
+  });
+
 
   $('#refresh').on('click', function (event) {
     console.log('refresh button clicked');
