@@ -18,6 +18,7 @@ $( document ).ready(function() {
     app.addRoom(newRoom);
     $('#room-select').val(newRoom);
     app.clearMessages();
+    $('#new-room').val('');
   });
 
   $('#room-select').change(function() {
@@ -45,6 +46,7 @@ app.send = function (message) {
     contentType: 'application/json',
     success: function (data) {
       console.log('chatterbox: Message sent');
+      $('#message').val('');
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -112,6 +114,8 @@ app.handleSubmit = function () {
     roomname: $('#room-select option:selected').text()
   };
   app.send(message);
+  app.fetch(serverUrl, app.displayMessages);
+
   // app.addMessage(message);
 };
 
