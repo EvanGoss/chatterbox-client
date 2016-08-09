@@ -14,7 +14,10 @@ $( document ).ready(function() {
   $('.new-room-submit').on('click', function (event) {
     console.log('add new room button clicked');
     // event.preventDefault();
-    app.addRoom($('#new-room').val());
+    var newRoom = $('#new-room').val();
+    app.addRoom(newRoom);
+    $('#room-select').val(newRoom);
+    app.clearMessages();
   });
 
   $('#room-select').change(function() {
