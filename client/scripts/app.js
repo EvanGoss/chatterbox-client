@@ -70,7 +70,7 @@ app.addMessage = function (message) {
 };
 
 app.addRoom = function (room) {
-  $('#roomSelect').append('<option>' + room + '</option>');
+  $('#room-select').append('<option>' + room + '</option>');
   // <option value="Room1" selected>Room1</option>
 };
 
@@ -83,7 +83,7 @@ app.handleSubmit = function () {
   var message = {
     username: user,
     text: $('#message').val(),
-    roomname: ''
+    roomname: $('#roomSelect option:selected').text()
   };
   app.send(message);
   // app.addMessage(message);
