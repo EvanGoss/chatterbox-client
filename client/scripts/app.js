@@ -7,19 +7,16 @@ $( document ).ready(function() {
 
   $('.submit').on('click', function (event) {
     console.log('submit button clicked');
-    // event.preventDefault();
     app.handleSubmit();
   });
 
   $('#refresh').on('click', function (event) {
     console.log('refresh button clicked');
-    // event.preventDefault();
     app.fetch(serverUrl, app.displayMessages);
   });
 
   $('.new-room-submit').on('click', function (event) {
     console.log('add new room button clicked');
-    // event.preventDefault();
     var newRoom = $('#new-room').val();
     app.addRoom(newRoom);
     $('#room-select').val(newRoom);
@@ -36,8 +33,10 @@ $( document ).ready(function() {
 var app = {};
 
 var user = window.location.search.split('username=')[1];
+var userID;
 
 var serverUrl = 'https://api.parse.com/1/classes/messages';
+var usersUrl = 'https://api.parse.com/1/classes/users';
 
 app.init = function () {
 
@@ -66,7 +65,6 @@ app.fetch = function (url, callback) {
     // This is the url you should use to communicate with the parse API server.
     url: url,
     type: 'GET',
-    // data: JSON.stringify(message),
     contentType: 'application/json',
     success: function (data) {
       console.log('chatterbox: Message fetched', data);
@@ -79,8 +77,88 @@ app.fetch = function (url, callback) {
   });
 };
 
+// GET USERS
+// users array stored in data.results
+app.fetchUsers = function (callback) {
+  console.log('fetchusers');
+  $.ajax({
+    url: usersUrl,
+    type: 'GET',
+    contentType: 'application/json',
+    success: function (data) {
+      console.log('fetchUsers success data:', data);
+      callback(data);
+    },
+    error: function (data) {
+      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+      console.error('fetchUsers fail data:', data);
+    }
+  });
+};
+
+// CREATE USER
+app.addUser = function (username) {
+  console.log('addUser');
+  var newUser = {
+    username: username,
+    friends: {}
+  };
+
+  $.ajax({
+    url: usersUrl,
+    type: 'POST',
+    data: JSON.stringify(newUser),
+    contentType: 'application/json',
+    success: function (data) {
+      console.log('success!', data);
+    },
+    error: function (data) {
+      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+      console.error('fail!', data);
+    }
+  });
+};
+
+app.addFriend = function (url, newFriend) {
+  console.log('addFriend');
+  $.ajax({
+    url: usersUrl,
+    type: 'PUT',
+    data: JSON.stringify(data.results[0].friends.newFriend = true),
+    contentType: 'application/json',
+    success: function (data) {
+      console.log('success!');
+      // $('#message').val('');
+    },
+    error: function (data) {
+      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+      console.error('fail!', data);
+    }
+  });
+};
+
+app.checkUser = function (data) {
+  console.log('checkUser');
+  data.results.forEach(function (item, index) {
+    if (item.username === user) {
+      userID = index;
+    } else {
+      return false;
+    }
+  });
+};
+
+app.initUser = function () {
+  console.log('initUser');
+  if ( app.fetchUsers(app.checkUser) === false) {
+    console.log('user not found');
+    app.addUser(user);
+  }
+  console.log('initUser complete');
+};
+
 app.displayMessages = function (data) {
-  console.log("display messages invoked");
+  console.log('display messages invoked');
   app.clearMessages();
       
   data.results.filter(function(item) {
@@ -105,7 +183,6 @@ app.addMessage = function (message) {
 
 app.addRoom = function (room) {
   $('#room-select').append('<option>' + room + '</option>');
-  // <option value="Room1" selected>Room1</option>
 };
 
 app.addFriend = function (friend) {
@@ -121,8 +198,6 @@ app.handleSubmit = function () {
   };
   app.send(message);
   app.fetch(serverUrl, app.displayMessages);
-
-  // app.addMessage(message);
 };
 
 app.getRooms = function () {
@@ -130,14 +205,14 @@ app.getRooms = function () {
 };
 
 app.updateRoomList = function (data) {
-  console.log("update room list invoked");
+  console.log('update room list invoked');
    
   var roomName = _.uniq(_.pluck(data.results, 'roomname')).sort();
   roomName.forEach(function(room) {
     app.addRoom(room);
   }); 
- 
 };
 
 app.getRooms();
 app.fetch(serverUrl, app.displayMessages);
+app.initUser();
