@@ -6,6 +6,11 @@ $( document ).ready(function() {
     app.toggleMessages('friend');
   });
 
+  $('.change-user').on('click', function (event) {
+    console.log('change user button clicked');
+    app.changeUser($('#new-user').val());
+  });
+
   $('.submit').on('click', function (event) {
     console.log('submit button clicked');
     app.handleSubmit();
@@ -93,48 +98,6 @@ app.fetch = function (url, callback) {
   });
 };
 
-// GET USERS
-// users array stored in data.results
-app.fetchUsers = function (callback) {
-  console.log('fetchusers');
-  $.ajax({
-    url: usersUrl,
-    type: 'GET',
-    contentType: 'application/json',
-    success: function (data) {
-      console.log('fetchUsers success data:', data);
-      callback(data);
-    },
-    error: function (data) {
-      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-      console.error('fetchUsers fail data:', data);
-    }
-  });
-};
-
-// CREATE USER
-// app.addUser = function (username) {
-//   console.log('addUser');
-//   var newUser = {
-//     username: username,
-//     friends: {}
-//   };
-
-//   $.ajax({
-//     url: usersUrl,
-//     type: 'POST',
-//     data: JSON.stringify(newUser),
-//     contentType: 'application/json',
-//     success: function (data) {
-//       console.log('success!', data);
-//     },
-//     error: function (data) {
-//       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-//       console.error('fail!', data);
-//     }
-//   });
-// };
-
 app.toggleFriend = function (friend) {
   friends[friend] = !friends[friend];
   console.log(friends);
@@ -149,15 +112,6 @@ app.checkUser = function (data) {
       return false;
     }
   });
-};
-
-app.initUser = function () {
-  console.log('initUser');
-  if ( app.fetchUsers(app.checkUser) === false) {
-    console.log('user not found');
-    app.addUser(user);
-  }
-  console.log('initUser complete');
 };
 
 app.displayMessages = function (data) {
@@ -179,9 +133,15 @@ app.clearMessages = function () {
 app.addMessage = function (message) {
   console.log('app.addMessage called');
 
-  $('#chats').append('<li><a class="username">' + message.username 
-    + '</a><p>' + message.text + '</p>'
+  var escaped = _.escape(message.text);
+
+  $('#chats').append('<li><a class="username">' + _.escape(message.username) 
+    + '</a><p>' + escaped + '</p>'
     + '</li>');
+
+  // $('#chats').append('<li><a class="username">' + _.escape(message.username) 
+  //   + '</a><p>' + message.text + '</p>'
+  //   + '</li>');
 };
 
 app.addRoom = function (room) {
@@ -212,6 +172,9 @@ app.updateRoomList = function (data) {
   }); 
 };
 
+app.changeUser = function(newUser) {
+  window.location.search = "username=" + newUser;
+};
+
 app.getRooms();
 app.fetch(serverUrl, app.displayMessages);
-app.initUser();
