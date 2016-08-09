@@ -18,15 +18,19 @@
   
       <div id="roomList">
         <select id="room-select">
-          <option value="Room1">Room1</option>
-          <option value="Room2">Room2</option>
+<!--           <option value="Room1">Room1</option>
+          <option value="Room2">Room2</option> -->
         </select>
       </div>
-      
-      <form id="send">
+      <div id="addRoom">
+        <input id="new-room" type="text" name="new-room"></input>
+        <input class="new-room-submit" type="button" name="new-room-submit" value="Add New Room"></input>
+      </div>
+      <div id="send">
+        <h3>New Message</h3>
         <input id="message" type="text" name="message"></input>
         <input class="submit" type="button" name="submit" value="submit"></input>
-      </form>
+      </div>
     </div>
 
     <div id="chats"></div>
