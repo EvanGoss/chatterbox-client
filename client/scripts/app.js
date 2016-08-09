@@ -1,8 +1,9 @@
 $( document ).ready(function() {
   console.log( 'ready!' );
-
+ 
   $('body').on('click', '.username', function () {
-    app.addFriend();
+    app.toggleFriend($(this).text());
+    app.toggleMessages('friend');
   });
 
   $('.submit').on('click', function (event) {
@@ -31,6 +32,7 @@ $( document ).ready(function() {
 });
 
 var app = {};
+var friends = {};
 
 var user = window.location.search.split('username=')[1];
 var userID;
@@ -40,6 +42,20 @@ var usersUrl = 'https://api.parse.com/1/classes/users';
 
 app.init = function () {
 
+};
+
+app.toggleMessages = function (classname) {
+  // loop thru msgs
+  $('#chats > li').each(function(index, msg) {
+    console.log(index, msg);
+    console.log($($(msg).children()[0]).text());
+    var msgUser = $($(msg).children()[0]).text();
+    if (friends[msgUser]) {
+      $(msg).toggleClass(classname);
+    }
+  });
+  // if username = target
+    // add class 'friends'
 };
 
 app.send = function (message) {
@@ -97,44 +113,31 @@ app.fetchUsers = function (callback) {
 };
 
 // CREATE USER
-app.addUser = function (username) {
-  console.log('addUser');
-  var newUser = {
-    username: username,
-    friends: {}
-  };
+// app.addUser = function (username) {
+//   console.log('addUser');
+//   var newUser = {
+//     username: username,
+//     friends: {}
+//   };
 
-  $.ajax({
-    url: usersUrl,
-    type: 'POST',
-    data: JSON.stringify(newUser),
-    contentType: 'application/json',
-    success: function (data) {
-      console.log('success!', data);
-    },
-    error: function (data) {
-      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-      console.error('fail!', data);
-    }
-  });
-};
+//   $.ajax({
+//     url: usersUrl,
+//     type: 'POST',
+//     data: JSON.stringify(newUser),
+//     contentType: 'application/json',
+//     success: function (data) {
+//       console.log('success!', data);
+//     },
+//     error: function (data) {
+//       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+//       console.error('fail!', data);
+//     }
+//   });
+// };
 
-app.addFriend = function (url, newFriend) {
-  console.log('addFriend');
-  $.ajax({
-    url: usersUrl,
-    type: 'PUT',
-    data: JSON.stringify(data.results[0].friends.newFriend = true),
-    contentType: 'application/json',
-    success: function (data) {
-      console.log('success!');
-      // $('#message').val('');
-    },
-    error: function (data) {
-      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-      console.error('fail!', data);
-    }
-  });
+app.toggleFriend = function (friend) {
+  friends[friend] = !friends[friend];
+  console.log(friends);
 };
 
 app.checkUser = function (data) {
@@ -183,10 +186,6 @@ app.addMessage = function (message) {
 
 app.addRoom = function (room) {
   $('#room-select').append('<option>' + room + '</option>');
-};
-
-app.addFriend = function (friend) {
-  console.log('addFriend called');
 };
 
 app.handleSubmit = function () {
