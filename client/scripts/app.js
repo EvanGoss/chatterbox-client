@@ -11,6 +11,12 @@ $( document ).ready(function() {
     app.handleSubmit();
   });
 
+  $('#refresh').on('click', function (event) {
+    console.log('refresh button clicked');
+    // event.preventDefault();
+    app.fetch(serverUrl, app.displayMessages);
+  });
+
   $('.new-room-submit').on('click', function (event) {
     console.log('add new room button clicked');
     // event.preventDefault();
